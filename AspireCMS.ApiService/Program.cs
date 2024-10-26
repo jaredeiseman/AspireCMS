@@ -39,6 +39,7 @@ public static class WebApplicationBuilderExtensions
         builder.Services.AddOpenApi();
 
         builder.Services.AddTransient<IPageService, PageService>();
+        builder.Services.AddTransient<IContentBlockService, ContentBlockService>();
 
         builder.Services.AddProblemDetails();
 
