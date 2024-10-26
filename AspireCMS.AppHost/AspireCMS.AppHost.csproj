@@ -13,7 +13,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AspireCMS.ApiService\AspireCMS.ApiService.csproj" />
-    <ProjectReference Include="..\AspireCMS.Web\AspireCMS.Web.csproj" />
   </ItemGroup>
 
   <ItemGroup>

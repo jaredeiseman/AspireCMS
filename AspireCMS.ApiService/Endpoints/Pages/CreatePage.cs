@@ -1,6 +1,7 @@
 ﻿using AspireCMS.ApiService.Contexts;
 using AspireCMS.ApiService.DTOs.Page.Requests;
 using AspireCMS.Entities;
+using AspireCMS.Interfaces;
 using FastEndpoints;
 using Microsoft.AspNetCore.Authorization;
 
@@ -10,17 +11,16 @@ namespace AspireCMS.ApiService.Endpoints.Pages
     [HttpPost("/api/page")]
     public class CreatePage : Endpoint<CreatePageRequest>
     {
-        public CMSContext Context { get; set; }
+        public IPageService _pageService { get; set; }
+
+        public CreatePage(IPageService pageService)
+        {
+            _pageService = pageService;
+        }
 
         public override async Task HandleAsync(CreatePageRequest req, CancellationToken ct)
         {
-            Page newPage = new Page() { Title = req.Title, Slug = req.Slug };
-            
-            Context.Pages.Add(newPage);
-            
-            await Context.SaveChangesAsync();
-            
-            await SendAsync(newPage);
+            await SendAsync(await _pageService.CreatePage(req.Title, req.Slug));
         }
     }
 }

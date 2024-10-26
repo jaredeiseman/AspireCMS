@@ -1,6 +1,7 @@
 ﻿using AspireCMS.ApiService.Contexts;
 using AspireCMS.ApiService.DTOs.Page.Requests;
 using AspireCMS.Entities;
+using AspireCMS.Interfaces;
 using FastEndpoints;
 using Microsoft.AspNetCore.Authorization;
 
@@ -10,22 +11,22 @@ namespace AspireCMS.ApiService.Endpoints.Pages
     [HttpDelete("/api/page/{PageId}")]
     public class DeletePage : Endpoint<DeletePageRequest>
     {
-        public CMSContext Context { get; set; }
+        private IPageService _pageService;
+
+        public DeletePage(IPageService pageService)
+        {
+            _pageService = pageService;
+        }
 
         public override async Task HandleAsync(DeletePageRequest req, CancellationToken ct)
         {
-            Page pageToDelete = await Context.Pages.FindAsync(req.PageId, ct);
-
-            if (pageToDelete == null)
+            if (await _pageService.DeletePage(req.PageId, ct))
             {
-                await SendNotFoundAsync();
+                await SendNoContentAsync();
             }
             else
             {
-                Context.Pages.Remove(pageToDelete);
-                await Context.SaveChangesAsync();
-
-                await SendNoContentAsync();
+                await SendNotFoundAsync();
             }
         }
     }

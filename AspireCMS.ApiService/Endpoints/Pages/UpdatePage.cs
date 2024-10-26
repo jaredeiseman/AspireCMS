@@ -2,6 +2,7 @@
 using AspireCMS.ApiService.DTOs.Page.Requests;
 using AspireCMS.ApiService.DTOs.Page.Responses;
 using AspireCMS.Entities;
+using AspireCMS.Interfaces;
 using FastEndpoints;
 using Microsoft.AspNetCore.Authorization;
 
@@ -11,22 +12,20 @@ namespace AspireCMS.ApiService.Endpoints.Pages
     [HttpPut("/api/page/{PageId}")]
     public class UpdatePage : Endpoint<UpdatePageRequest, PageResponse>
     {
-        public CMSContext Context { get; set; }
+        private IPageService _pageService;
+
+        public UpdatePage(IPageService pageService)
+        {
+            _pageService = pageService;
+        }
 
         public override async Task HandleAsync(UpdatePageRequest request, CancellationToken ct)
         {
-            Page pageToUpdate = await Context.Pages.FindAsync(request.PageId, ct);
+            Page? updatedPage = await _pageService.UpdatePage(request.ConvertToPage());
 
-            if (pageToUpdate != null)
+            if (updatedPage != null)
             {
-                pageToUpdate.Slug = request.Slug;
-                pageToUpdate.Title = request.Title;
-                pageToUpdate.IsPublished = request.IsPublished;
-                pageToUpdate.UpdatedDate = DateTime.Now;
-
-                await Context.SaveChangesAsync();
-
-                await SendAsync(new PageResponse(pageToUpdate));
+                await SendAsync(new PageResponse(updatedPage));
             }
             else
             {

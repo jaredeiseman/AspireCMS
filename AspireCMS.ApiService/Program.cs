@@ -1,5 +1,7 @@
 using AspireCMS.ApiService.Contexts;
+using AspireCMS.ApiService.Services;
 using AspireCMS.Entities;
+using AspireCMS.Interfaces;
 using FastEndpoints;
 using Scalar.AspNetCore;
 
@@ -36,7 +38,8 @@ public static class WebApplicationBuilderExtensions
 
         builder.Services.AddOpenApi();
 
-        // Add services to the container.
+        builder.Services.AddTransient<IPageService, PageService>();
+
         builder.Services.AddProblemDetails();
 
         return builder;

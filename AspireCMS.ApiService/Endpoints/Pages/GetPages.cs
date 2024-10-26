@@ -1,6 +1,7 @@
 ﻿using AspireCMS.ApiService.Contexts;
 using AspireCMS.ApiService.DTOs.Page.Responses;
 using AspireCMS.Entities;
+using AspireCMS.Interfaces;
 using FastEndpoints;
 using Microsoft.AspNetCore.Authorization;
 
@@ -10,11 +11,16 @@ namespace AspireCMS.ApiService.Endpoints.Pages
     [HttpGet("/api/pages")]
     public class GetPages : EndpointWithoutRequest<PagesResponse>
     {
-        public CMSContext Context { get; set; }
+        private IPageService _pageService;
+
+        public GetPages(IPageService pageService)
+        {
+            _pageService = pageService;
+        }
 
         public override async Task HandleAsync(CancellationToken ct)
         {
-            List<Page> pages = Context.Pages.ToList();
+            List<Page> pages = _pageService.GetAllPages();
 
             if (pages == null || pages.Count == 0)
                 await SendNotFoundAsync();
